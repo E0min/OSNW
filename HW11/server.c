@@ -113,6 +113,10 @@ void *producer(void *socket_desc)
         rdata->left_num = ntohl(rdata->left_num);
         rdata->right_num = ntohl(rdata->right_num);
         rdata->client_fd = sock;
+        if(strcmp(rdata->str,"quit")==0){
+            return 0;
+
+        }
         printf("Received string data: %s\n", rdata->str);
 
         pthread_t consumer_thread;
@@ -145,7 +149,7 @@ void *consumer(void *data_arg)
     Data *data_ptr = (Data *)data_arg;
 
     pthread_mutex_lock(&m_lock);
-    // 데이터 처리 로직 (예시: 사칙연산)
+    // 데이터 처리 로직 
     switch (data_ptr->op)
     {
     case '+':
@@ -160,7 +164,7 @@ void *consumer(void *data_arg)
     case '/':
         data_ptr->result = htonl(data_ptr->left_num / data_ptr->right_num);
         break;
-        // 기타 연산자 처리...
+        
     }
     data_ptr->left_num = htonl(data_ptr->left_num);
     data_ptr->right_num = htonl(data_ptr->right_num);

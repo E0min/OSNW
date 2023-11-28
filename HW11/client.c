@@ -8,7 +8,7 @@
 #include <time.h>
 
 #define MAXLINE 1024
-
+int client_exit = 0;
 typedef struct
 {
     int left_num;
@@ -82,6 +82,7 @@ void *send_thread(void *arg)
 
         if (strcmp(sdata.str, "quit") == 0)
         {
+            client_exit = 1; // Set exit signal
             break;
         }
 
@@ -108,7 +109,10 @@ void *receive_thread(void *arg)
         {
             break;
         }
-
+        if (client_exit) // Check if exit signal is set
+        {
+            break;
+        }
         printf("결과: %d %c %d = %d ", ntohl(rdata.left_num), rdata.op, ntohl(rdata.right_num), ntohl(rdata.result));
 
         // 서버로부터 현재 시간 정보 읽기
